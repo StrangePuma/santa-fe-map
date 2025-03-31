@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html>
 <head>
     <title>Santa Fe Interactive Map</title>
@@ -6,8 +6,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" />
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; }
+        body, html { 
+            font-family: Arial, sans-serif !important;
+            margin: 0; 
+            padding: 0; 
+            height: 100%; 
+        }
+        
+        * {
+            font-family: Arial, sans-serif !important;
+        }
+        
         #map { height: 90vh; width: 100vw; }
+        
         #refreshButton {
             position: absolute;
             top: 10px;
@@ -20,6 +31,10 @@
             border-radius: 5px;
         }
     </style>
+    <!-- Prevent Google Sites from caching fonts -->
+    <meta http-equiv="Cache-Control" content="no-store" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
 </head>
 <body>
     <div id="refreshButton">Refresh Map</div>
