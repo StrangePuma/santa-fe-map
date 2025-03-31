@@ -68,35 +68,37 @@
         };
 
         const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
-
+        const proxyUrl = "https://corsproxy.io/?";  // Alternative proxy service that should work
+            
         async function loadApprovedPins() {
             try {
-                const response = await fetch(sheetUrl);
-                const data = await response.text();
-        
-                const rows = data.split("\n").slice(1);
-        
-                markers.forEach(marker => map.removeLayer(marker));
-                markers = [];
-        
+                 const response = await fetch(proxyUrl + encodeURIComponent(sheetUrl));
+                  const data = await response.text();
+                    
+                 const rows = data.split("\n").slice(1);
+            
+                 markers.forEach(marker => map.removeLayer(marker));
+                 markers = [];
+            
                 rows.forEach(row => {
                     const columns = row.split(",");
-                    if (columns.length < 7) return;
-        
+                     if (columns.length < 7) return;
+            
                     const lat = parseFloat(columns[1]);
                     const lng = parseFloat(columns[2]);
                     const description = columns[5].trim();
                     const approvalStatus = columns[6].trim();
-        
-                    if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
-                        const icon = icons[description] || icons["Other"];
-                        const marker = L.marker([lat, lng], { icon: icon }).addTo(map).bindPopup(`${description}`);
-                        markers.push(marker);
+            
+                     if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
+                          const icon = icons[description] || icons["Other"];
+                         const marker = L.marker([lat, lng], { icon: icon }).addTo(map).bindPopup(`${description}`);
+                         markers.push(marker);
                     }
                 });
+                 console.log("Markers loaded successfully.");
             } catch (error) {
-                console.error("Error fetching data:", error);
-            }
+                 console.error("Error fetching data:", error);
+             }
         }
         
         loadApprovedPins();
