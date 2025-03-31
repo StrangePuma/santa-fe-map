@@ -60,58 +60,6 @@
         let markers = [];
         let draggableMarker = null;
 
-        // Define Icons for Each Category
-        const icons = {
-            "Pothole": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            }),
-            "Broken Traffic Light": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            }),
-            "Vandalism": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            }),
-            "Drug Use/Dealing": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            }),
-            "Power Outage": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            }),
-            "Park Maintenance Issue": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            }),
-            "Road Surface Irregularities": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            }),
-            "Other": L.icon({
-                iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png',
-                iconSize: [25, 41],
-                iconAnchor: [12, 41],
-                popupAnchor: [1, -34]
-            })
-        };
-
         async function loadApprovedPins() {
             const proxyUrl = "https://api.allorigins.win/raw?url=";
             const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
@@ -120,8 +68,6 @@
             try {
                 const response = await fetch(url);
                 const data = await response.text();
-                console.log("Fetched Data:", data);
-
                 const rows = data.split("\n").slice(1);
 
                 markers.forEach(marker => map.removeLayer(marker));
@@ -137,8 +83,7 @@
                     const approvalStatus = columns[6].trim();
 
                     if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
-                        const icon = icons[description] || icons["Other"];
-                        const marker = L.marker([lat, lng], { icon: icon }).addTo(map)
+                        const marker = L.marker([lat, lng]).addTo(map)
                             .bindPopup(`${description}`);
 
                         markers.push(marker);
@@ -152,7 +97,7 @@
         }
 
         loadApprovedPins();
-        
+
         document.getElementById('refreshButton').addEventListener('click', loadApprovedPins);
 
         map.on('click', function (e) {
@@ -167,7 +112,7 @@
                 map.removeLayer(draggableMarker);
             }
 
-            draggableMarker = L.marker([lat, lng], { draggable: true, icon: icons["Other"] }).addTo(map)
+            draggableMarker = L.marker([lat, lng], { draggable: true }).addTo(map)
                 .bindPopup("Drag me to the exact location, then release.")
                 .openPopup();
 
@@ -179,8 +124,11 @@
                 const googleFormUrl = `https://docs.google.com/forms/d/e/1FAIpQLSe5IT5OsIwiEOXXoLnRyym23zOrVpIHjqdmWD9X7Y_el0I4lw/viewform?usp=pp_url&entry.1060958778=${finalLat}&entry.218844714=${finalLng}`;
 
                 window.open(googleFormUrl, "_blank");
+
+                setTimeout(loadApprovedPins, 5000); // Refresh the map markers after submission
             });
         });
     </script>
 </body>
 </html>
+
