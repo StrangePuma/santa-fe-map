@@ -95,8 +95,7 @@
         };
 
         async function loadApprovedPins() {
-            const proxyUrl = "https://api.allorigins.win/raw?url=";
-            const url = proxyUrl + "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
+            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
             
             try {
                 const response = await fetch(url);
