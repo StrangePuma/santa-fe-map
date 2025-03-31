@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <title>Santa Fe Interactive Map</title>
@@ -31,10 +31,6 @@
             border-radius: 5px;
         }
     </style>
-    <!-- Prevent Google Sites from caching fonts -->
-    <meta http-equiv="Cache-Control" content="no-store" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
 </head>
 <body>
     <div id="refreshButton">Refresh Map</div>
@@ -128,7 +124,7 @@
                 map.removeLayer(draggableMarker);
             }
 
-            draggableMarker = L.marker([lat, lng], { draggable: true }).addTo(map)
+            draggableMarker = L.marker([lat, lng], { draggable: true, icon: icons["Other"] }).addTo(map)
                 .bindPopup("Drag me to the exact location, then release.")
                 .openPopup();
 
