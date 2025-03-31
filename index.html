@@ -13,10 +13,6 @@
             height: 100%; 
         }
         
-        * {
-            font-family: Arial, sans-serif !important;
-        }
-        
         #map { height: 90vh; width: 100vw; }
         
         #refreshButton {
@@ -73,17 +69,6 @@
         let markers = [];
         let draggableMarker = null;
 
-        const icons = {
-            "Pothole": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
-            "Broken Traffic Light": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
-            "Vandalism": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
-            "Drug Use/Dealing": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
-            "Power Outage": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
-            "Park Maintenance Issue": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
-            "Road Surface Irregularities": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
-            "Other": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png', iconSize: [25, 41], iconAnchor: [12, 41]})
-        };
-
         const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
 
         async function loadApprovedPins() {
@@ -106,8 +91,7 @@
                     const approvalStatus = columns[6].trim();
         
                     if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
-                        const icon = icons[description] || icons["Other"];
-                        const marker = L.marker([lat, lng], { icon }).addTo(map).bindPopup(`${description}`);
+                        const marker = L.marker([lat, lng]).addTo(map).bindPopup(`${description}`);
                         markers.push(marker);
                     }
                 });
@@ -128,19 +112,27 @@
                 return;
             }
 
-            draggableMarker = L.marker(e.latlng, { draggable: true, icon: icons["Other"] }).addTo(map)
+            draggableMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
                 .bindPopup("Drag me to the exact location, then release.")
                 .openPopup();
 
             draggableMarker.on('dragend', function () {
+                const { lat, lng } = draggableMarker.getLatLng();
+                const googleFormUrl = `https://docs.google.com/forms/d/e/1FAIpQLSe5IT5OsIwiEOXXoLnRyym23zOrVpIHjqdmWD9X7Y_el0I4lw/viewform?usp=pp_url&entry.1060958778=${lat}&entry.218844714=${lng}`;
+                
+                window.open(googleFormUrl, "_blank");
+
+                document.getElementById('statusMessage').style.display = 'block';
+
                 map.removeLayer(draggableMarker);
                 draggableMarker = null;
 
-                document.getElementById('statusMessage').style.display = 'block';
-                setTimeout(loadApprovedPins, 5000);
+                setTimeout(() => {
+                    loadApprovedPins();
+                    document.getElementById('statusMessage').style.display = 'none';
+                }, 5000);
             });
         });
     </script>
 </body>
 </html>
-
