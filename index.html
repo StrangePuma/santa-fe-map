@@ -1,4 +1,4 @@
-<!DOCTYPE html>                                                                                                                                                                                                                                      
+<!DOCTYPE html>
 <html>
 <head>
     <title>Santa Fe Interactive Map</title>
@@ -28,8 +28,8 @@
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
     <script>
         const santaFeBounds = L.latLngBounds(
-            [35.6000, -106.0500], 
-            [35.7500, -105.8500]  
+            [35.5000, -106.1500], // Expanded Southwest corner
+            [35.8000, -105.7500]  // Expanded Northeast corner
         );
 
         const map = L.map('map', {
@@ -48,7 +48,7 @@
 
         let markers = [];
 
-        // Define Blue and Yellow Icons (Custom Design)
+        // Define Blue Icon (Custom Design)
         const blueIcon = L.icon({
             iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png',
             iconSize: [25, 41],
@@ -58,17 +58,8 @@
             shadowSize: [41, 41]
         });
 
-        const yellowIcon = L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-            shadowSize: [41, 41]
-        });
-
         async function loadApprovedPins() {
-        const proxyUrl = "https://api.allorigins.win/raw?url=";  // Safer Proxy
+            const proxyUrl = "https://api.allorigins.win/raw?url=";  // Safer Proxy
             const url = proxyUrl + "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
             
             try {
@@ -88,7 +79,6 @@
 
                     const lat = parseFloat(columns[1]);
                     const lng = parseFloat(columns[2]);
-                    const name = columns[3];
                     const description = columns[5];
                     const approvalStatus = columns[6].trim();
 
@@ -96,7 +86,7 @@
 
                     if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
                         const marker = L.marker([lat, lng], { icon: blueIcon }).addTo(map)
-                            .bindPopup(`<b>${name}</b><br>${description}`);
+                            .bindPopup(`${description}`);
                         
                         markers.push(marker);
                     }
