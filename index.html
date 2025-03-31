@@ -26,23 +26,10 @@
             cursor: pointer;
             border-radius: 5px;
         }
-
-        #statusMessage {
-            position: absolute;
-            top: 50px;
-            left: 10px;
-            z-index: 1000;
-            background-color: white;
-            border: 2px solid #333;
-            padding: 10px;
-            border-radius: 5px;
-            display: none;
-        }
     </style>
 </head>
 <body>
     <div id="refreshButton">Refresh Map</div>
-    <div id="statusMessage">Your submission is awaiting approval. Please check back later.</div>
     <div id="map"></div>
 
     <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"></script>
@@ -69,6 +56,17 @@
         let markers = [];
         let draggableMarker = null;
 
+        const icons = {
+            "Pothole": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
+            "Broken Traffic Light": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-green.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
+            "Vandalism": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-yellow.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
+            "Drug Use/Dealing": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-black.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
+            "Power Outage": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
+            "Park Maintenance Issue": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-orange.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
+            "Road Surface Irregularities": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-violet.png', iconSize: [25, 41], iconAnchor: [12, 41]}),
+            "Other": L.icon({iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png', iconSize: [25, 41], iconAnchor: [12, 41]})
+        };
+
         const sheetUrl = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
 
         async function loadApprovedPins() {
@@ -91,7 +89,8 @@
                     const approvalStatus = columns[6].trim();
         
                     if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
-                        const marker = L.marker([lat, lng]).addTo(map).bindPopup(`${description}`);
+                        const icon = icons[description] || icons["Other"];
+                        const marker = L.marker([lat, lng], { icon: icon }).addTo(map).bindPopup(`${description}`);
                         markers.push(marker);
                     }
                 });
@@ -112,7 +111,7 @@
                 return;
             }
 
-            draggableMarker = L.marker(e.latlng, { draggable: true }).addTo(map)
+            draggableMarker = L.marker(e.latlng, { draggable: true, icon: icons["Other"] }).addTo(map)
                 .bindPopup("Drag me to the exact location, then release.")
                 .openPopup();
 
@@ -122,14 +121,11 @@
                 
                 window.open(googleFormUrl, "_blank");
 
-                document.getElementById('statusMessage').style.display = 'block';
-
                 map.removeLayer(draggableMarker);
                 draggableMarker = null;
 
                 setTimeout(() => {
                     loadApprovedPins();
-                    document.getElementById('statusMessage').style.display = 'none';
                 }, 5000);
             });
         });
