@@ -95,40 +95,38 @@
         };
 
         async function loadApprovedPins() {
-            const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv";
-            
-            try {
-                const response = await fetch(url);
-                const data = await response.text();
-                console.log("Fetched Data:", data);
+    const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRoEDR3Pg9SMTC8ROa9ORt9vgj1drv3n0GyANlq1BdFNxVpevNxJHvYERlJKhNvHrk1Q-IFbs9IRyoz/pub?output=csv&nocache=${Date.now()}`;
 
-                const rows = data.split("\n").slice(1);
+    try {
+        const response = await fetch(url);
+        const data = await response.text();
+        console.log("Fetched Data:", data);
 
-                markers.forEach(marker => map.removeLayer(marker));
-                markers = [];
+        const rows = data.split("\n").slice(1);
 
-                rows.forEach(row => {
-                    const columns = row.split(",");
-                    if (columns.length < 7) return;
+        markers.forEach(marker => map.removeLayer(marker));
+        markers = [];
 
-                    const lat = parseFloat(columns[1]);
-                    const lng = parseFloat(columns[2]);
-                    const description = columns[5];
-                    const approvalStatus = columns[6].trim();
+        rows.forEach(row => {
+            const columns = row.split(",");
+            if (columns.length < 7) return;
 
-                    if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
-                        const icon = icons[description] || icons["Other"]; // Use category icon or fallback to "Other"
+            const lat = parseFloat(columns[1]);
+            const lng = parseFloat(columns[2]);
+            const description = columns[5];
+            const approvalStatus = columns[6].trim();
 
-                        const marker = L.marker([lat, lng], { icon: icon }).addTo(map)
-                            .bindPopup(`${description}`);
-                        
-                        markers.push(marker);
-                    }
-                });
-            } catch (error) {
-                console.error("Error fetching data:", error);
+            if (approvalStatus === "Approved" && !isNaN(lat) && !isNaN(lng)) {
+                const marker = L.marker([lat, lng], { icon: blueIcon }).addTo(map)
+                    .bindPopup(`${description}`);
+                
+                markers.push(marker);
             }
-        }
+        });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+}
 
         loadApprovedPins();
         
